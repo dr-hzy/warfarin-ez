@@ -1,5 +1,5 @@
-// Warfarin-EZ v2.2 Service Worker
-const CACHE_NAME = 'warfarin-ez-v2.2-en';
+// Warfarin-EZ v2.5 Service Worker
+const CACHE_NAME = 'warfarin-ez-v2.5-en';
 const ASSETS = [
   './index.html',
   './manifest.json',

@@ -1,7 +1,7 @@
 {
-  "name": "Warfarin-EZ: AC-MTAC Clinical Decision Support",
+  "name": "Warfarin-EZ: KK Pontian Clinical Decision Support",
   "short_name": "Warfarin-EZ",
-  "description": "Klinik Kesihatan Warfarin Maintenance Dosing Decision Support Application (MOH AC-MTAC Protocol 2nd Edition)",
+  "description": "Klinik Kesihatan Pontian Warfarin Maintenance Dosing Decision Support Application (MOH AC-MTAC Protocol 2nd Edition)",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#1e3a8a",

@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Warfarin-EZ">
-  <title>Warfarin-EZ v2.2 (EN) | KK Clinical Decision Support</title>
+  <title>Warfarin-EZ v2.5 (EN) | KK Pontian Clinical Decision Support</title>
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,9 +31,9 @@
         </div>
         <div>
           <h1 class="font-bold text-lg leading-tight tracking-wide flex items-center gap-2">
-            Warfarin-EZ <span class="text-[11px] bg-blue-700 text-blue-200 px-2 py-0.5 rounded font-mono">v2.2 EN (Nov 2026)</span>
+            Warfarin-EZ <span class="text-[11px] bg-blue-700 text-blue-200 px-2 py-0.5 rounded font-mono">v2.5 EN (Nov 2026)</span>
           </h1>
-          <p class="text-xs text-blue-200">Klinik Kesihatan Clinical Decision Support (MOH AC-MTAC Protocol 2nd Ed)</p>
+          <p class="text-xs text-blue-200">Klinik Kesihatan Pontian Clinical Decision Support (MOH AC-MTAC Protocol 2nd Ed)</p>
         </div>
       </div>
       <div class="flex flex-wrap items-center gap-1.5">
@@ -56,7 +56,7 @@
     <div class="p-3 bg-amber-50 border-l-4 border-amber-600 text-amber-900 rounded-r-lg text-xs flex items-start gap-2.5 shadow-sm">
       <i class="fa-solid fa-circle-info text-amber-700 mt-0.5 text-base"></i>
       <div>
-        <span class="font-bold">CLINICAL SCOPE & DISCLAIMER:</span> This calculator is strictly intended for the <strong>MAINTENANCE PHASE</strong> of warfarin therapy. For newly initiated patients (Day 1–14), consult the <em>Initiation Guide</em> above. This tool provides <strong>assistive clinical decision support</strong> based on the MOH Malaysia AC-MTAC Protocol 2nd Edition (2020) and is <strong>not a substitute for professional clinical judgment</strong>.
+        <span class="font-bold">CLINICAL SCOPE & DISCLAIMER:</span> Strictly for the <strong>MAINTENANCE PHASE</strong> of warfarin therapy (for new starts Day 1–14, see <em>Initiation Guide</em>). Built with <strong>Clinical Discordance & Error-Prevention Guardrails</strong> and KK Pontian's <strong>Maforan</strong> dispensing rules. This tool provides <strong>assistive clinical decision support</strong> per MOH AC-MTAC Protocol 2nd Ed (2020) and is <strong>not a substitute for clinical judgment</strong>.
       </div>
     </div>
 
@@ -71,20 +71,29 @@
           <i class="fa-solid fa-table-list"></i> View Full &uarr;/&darr; INR Reference Table
         </button>
       </div>
-      <p class="text-xs text-slate-500 mb-4">Screen for reversible triggers of INR fluctuations before adjusting maintenance doses. Isolated fluctuations from reversible causes should not trigger immediate permanent dose adjustments.</p>
+      <p class="text-xs text-slate-500 mb-4">Screen for adherence errors and reversible triggers before altering weekly maintenance doses. Note the expected directional effect (&uarr; vs &darr; INR).</p>
 
-      <!-- Sub-section: Root Causes -->
+      <!-- Sub-section: Adherence & Root Causes -->
       <div class="mb-4">
         <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-clipboard-question text-blue-600"></i> A. Reversible Causes of INR Fluctuations (&uarr; or &darr; INR)
+          <i class="fa-solid fa-clipboard-question text-blue-600"></i> A. Adherence Errors & Reversible Triggers
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
-          <!-- Missed Dose -->
+          <!-- Missed Dose (Lowers INR) -->
           <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
             <input type="checkbox" id="chkMissed" onchange="evaluatePreconditions()" class="mt-0.5 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
             <div>
-              <div class="font-bold text-slate-800">Missed / Extra Dose (&darr; or &uarr; INR)</div>
-              <div class="text-slate-500 text-[11px] leading-tight">Forgot evening dose & not taken before 12 midnight, &ge;1 missed dose in past 7 days, or accidental double dose.</div>
+              <div class="font-bold text-slate-800">Missed Dose(s) Only <span class="text-blue-700 font-mono text-[10px]">(Expected: &darr; INR)</span></div>
+              <div class="text-slate-500 text-[11px] leading-tight">Forgot scheduled evening dose & did NOT take extra/double pills to compensate.</div>
+            </div>
+          </label>
+
+          <!-- Accidental Double / Extra Dose (Raises INR) -->
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-amber-200 bg-amber-50/40 hover:bg-amber-100/40 cursor-pointer">
+            <input type="checkbox" id="chkDoubleDose" onchange="evaluatePreconditions()" class="mt-0.5 h-4 w-4 rounded text-amber-600 focus:ring-amber-500">
+            <div>
+              <div class="font-bold text-amber-950">Accidental Double / Extra Dose <span class="text-red-700 font-mono text-[10px]">(Expected: &uarr; INR)</span></div>
+              <div class="text-amber-900 text-[11px] leading-tight">Took double dose after forgetting a pill, or confused tablet colors/strengths at home.</div>
             </div>
           </label>
 
@@ -92,7 +101,7 @@
           <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
             <input type="checkbox" id="chkInteractions" onchange="evaluatePreconditions()" class="mt-0.5 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
             <div>
-              <div class="font-bold text-slate-800">Interacting Drugs / Herbs (&uarr; or &darr; INR)</div>
+              <div class="font-bold text-slate-800">Interacting Drugs / Herbs <span class="text-slate-600 font-mono text-[10px]">(&uarr; or &darr; INR)</span></div>
               <div class="text-slate-500 text-[11px] leading-tight"><strong>&uarr; INR:</strong> Metronidazole, Cipro, Bactrim, Azoles, Macrolides, Amiodarone, NSAIDs, Alcohol. <strong>&darr; INR:</strong> Rifampicin, Carbamazepine, Phenytoin, TCM herbs.</div>
             </div>
           </label>
@@ -101,17 +110,17 @@
           <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
             <input type="checkbox" id="chkLifestyle" onchange="evaluatePreconditions()" class="mt-0.5 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
             <div>
-              <div class="font-bold text-slate-800">Diet, Exercise & Lifestyle Shift</div>
-              <div class="text-slate-500 text-[11px] leading-tight"><strong>&uarr; INR:</strong> Sudden drop in leafy greens, cranberry juice. <strong>&darr; INR:</strong> Sudden surge in leafy greens, <strong>increase in exercise/physical activity</strong>, smoking changes.</div>
+              <div class="font-bold text-slate-800">Diet, Exercise & Lifestyle Shift <span class="text-slate-600 font-mono text-[10px]">(&uarr; or &darr; INR)</span></div>
+              <div class="text-slate-500 text-[11px] leading-tight"><strong>&uarr; INR:</strong> Sudden drop in leafy greens, cranberry juice. <strong>&darr; INR:</strong> Sudden surge in leafy greens, <strong>increase in exercise</strong>, smoking changes.</div>
             </div>
           </label>
 
           <!-- Acute Illness & Organ Conditions -->
-          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer">
+          <label class="flex items-start gap-2 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer sm:col-span-2">
             <input type="checkbox" id="chkIllness" onchange="evaluatePreconditions()" class="mt-0.5 h-4 w-4 rounded text-blue-600 focus:ring-blue-500">
             <div>
-              <div class="font-bold text-slate-800">Acute Illness / Organ State (&uarr; or &darr; INR)</div>
-              <div class="text-slate-500 text-[11px] leading-tight"><strong>&uarr; INR:</strong> Fever (&gt;38&deg;C), diarrhea, CCF, liver disease, hyperthyroidism, poor nutrition. <strong>&darr; INR:</strong> Hypothyroidism, nephrotic syndrome, edema.</div>
+              <div class="font-bold text-slate-800">Acute Illness / Organ State Change <span class="text-slate-600 font-mono text-[10px]">(&uarr; or &darr; INR)</span></div>
+              <div class="text-slate-500 text-[11px] leading-tight"><strong>&uarr; INR:</strong> High fever (&gt;38&deg;C), prolonged diarrhea, CCF decompensation, liver disease, hyperthyroidism, poor oral intake. <strong>&darr; INR:</strong> Hypothyroidism, nephrotic syndrome, edema.</div>
             </div>
           </label>
         </div>
@@ -168,14 +177,14 @@
       <!-- Pregnancy Alert Banner -->
       <div id="pregnancyWarningBanner" class="hidden mt-4 p-3 bg-purple-100 border-l-4 border-purple-700 text-purple-950 rounded text-xs">
         <strong class="font-bold text-sm block mb-0.5"><i class="fa-solid fa-person-pregnant"></i> URGENT REFERRAL: PREGNANCY / PRE-CONCEPTION DETECTED</strong>
-        Do NOT titrate warfarin independently in primary care. Refer urgently to the Obstetrician / Cardiologist / Physician to evaluate conversion to Low Molecular Weight Heparin (LMWH) and specialized maternal-fetal monitoring.
+        Do NOT titrate warfarin independently in primary care. Refer urgently to the Obstetrician / Cardiologist / Physician to evaluate conversion to Low Molecular Weight Heparin (LMWH).
       </div>
 
       <!-- Bleeding Red Alert Banner -->
       <div id="bleedWarningBanner" class="hidden mt-4 p-3 bg-red-100 border-l-4 border-red-600 text-red-900 rounded text-xs flex items-center justify-between shadow-xs">
         <div>
           <strong class="font-bold text-sm block mb-0.5"><i class="fa-solid fa-radiation"></i> CLINICAL ALERT: ACTIVE BLEEDING DETECTED!</strong>
-          Withhold warfarin immediately. Assess hemodynamic stability, check urgent Hb/FBC, and consult the Medical Officer / FMS on duty. Patients with major bleeding or critical red flags require immediate emergency transfer to Hospital ED for resuscitation and reversal.
+          Withhold warfarin immediately. Assess hemodynamic stability, check urgent Hb/FBC, and consult the Medical Officer / FMS on duty. Major bleeding or red flags require immediate Hospital ED transfer.
         </div>
         <button onclick="toggleModal('reversalModal')" class="bg-red-700 hover:bg-red-800 text-white px-3 py-1.5 rounded text-xs ml-3 font-bold whitespace-nowrap shadow">
           Reversal Protocol
@@ -184,9 +193,8 @@
 
       <!-- Root Cause Advisory Notice -->
       <div id="rootCauseNotice" class="hidden mt-3 p-3 bg-amber-50 border border-amber-300 text-amber-900 rounded-lg text-xs leading-relaxed">
-        <strong><i class="fa-solid fa-triangle-exclamation text-amber-600"></i> CLINICAL NOTE (Reversible Trigger Identified):</strong>
-        Patient has a recent reversible trigger (missed dose, interacting drug/herb, diet/exercise shift, or acute illness). Per MOH AC-MTAC guidelines, an isolated out-of-range INR due to a reversible cause <strong>should NOT trigger an immediate permanent dose adjustment</strong> unless the INR remains out of target across &ge;2 consecutive visits after resolving the trigger.
-        <div class="mt-1 font-semibold">Recommended Action: Address trigger / reinforce adherence, maintain current dose, and repeat INR in 7–14 days (or 3 days if started on interacting antibiotics/amiodarone).</div>
+        <strong><i class="fa-solid fa-triangle-exclamation text-amber-600"></i> PRE-TITRATION GUARDRAIL ACTIVE:</strong>
+        A transient adherence error or reversible trigger has been flagged. Per MOH AC-MTAC guidelines, <strong>avoid making permanent weekly dose changes</strong> for an isolated reading caused by a transient trigger—verify directional consistency with today's INR below.
       </div>
     </section>
 
@@ -222,7 +230,7 @@
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">Today's INR (POCT / Lab)</label>
           <div class="relative">
-            <input type="number" id="inpCurrentINR" placeholder="e.g. 1.86 or 4.1" step="0.01" oninput="resetOutputState()" class="w-full text-base font-bold border-blue-400 rounded-lg p-2 border text-blue-900 focus:ring-2 focus:ring-blue-500">
+            <input type="number" id="inpCurrentINR" placeholder="e.g. 1.86 or 4.5" step="0.01" oninput="resetOutputState()" class="w-full text-base font-bold border-blue-400 rounded-lg p-2 border text-blue-900 focus:ring-2 focus:ring-blue-500">
             <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-medium">INR</span>
           </div>
         </div>
@@ -292,7 +300,10 @@
           <span id="badgeStatus" class="px-3 py-1 rounded-full text-xs font-bold">In Therapeutic Range</span>
         </div>
 
-        <!-- Alert Box -->
+        <!-- Discordance / Medical Error Prevention Alert Box -->
+        <div id="discordanceAlertBox" class="hidden p-4 rounded-xl text-xs sm:text-sm mb-4 leading-relaxed border-2 border-red-500 bg-red-50 text-red-950 shadow-sm"></div>
+
+        <!-- Primary Recommendation Box -->
         <div id="alertBox" class="p-4 rounded-xl text-xs sm:text-sm mb-4 leading-relaxed border"></div>
 
         <!-- Metric Cards -->
@@ -302,7 +313,7 @@
             <div id="resOldTotal" class="text-xl font-black text-slate-800 mt-1">0.0 mg</div>
           </div>
           <div class="p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <div class="text-[11px] text-blue-700 uppercase font-bold tracking-wider">Recommended Weekly Dose</div>
+            <div class="text-[11px] text-blue-700 uppercase font-bold tracking-wider">Ongoing Weekly Maintenance</div>
             <div id="resNewTotal" class="text-xl font-black text-blue-900 mt-1">0.0 mg</div>
           </div>
           <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
@@ -311,27 +322,35 @@
           </div>
         </div>
 
+        <!-- Immediate Hold Notice Banner (when 1-2 doses must be held before resuming weekly maintenance) -->
+        <div id="immediateHoldBanner" class="hidden p-3.5 bg-amber-100 border-l-4 border-amber-600 text-amber-950 rounded-r-lg mb-4 text-xs leading-relaxed">
+          <div class="font-bold text-sm mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-hand"></i> STEP 1 IMMEDIATE ACTION: HOLD / OMIT DOSE(S) FIRST
+          </div>
+          <div id="immediateHoldText"></div>
+        </div>
+
         <!-- MOH Brand Reference: Maforan -->
         <div class="p-3 bg-indigo-50 border border-indigo-200 rounded-lg mb-4 text-xs">
           <div class="font-bold text-indigo-950 mb-1 flex items-center gap-1.5">
-            <i class="fa-solid fa-tablets text-indigo-700"></i> MOH Warfarin Formulation Reference ("Maforan" Round Tablet):
+            <i class="fa-solid fa-tablets text-indigo-700"></i> KK Pontian Active Stock — "Maforan" Round Tablet Color Guide:
           </div>
           <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] mt-2">
-            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-200">
-              <span class="w-3.5 h-3.5 rounded-full border border-slate-300 bg-white inline-block shadow-2xs"></span>
-              <span class="font-bold text-slate-800">1 mg</span> <span class="text-slate-500">(White)</span>
+            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-300 shadow-2xs">
+              <span class="w-4 h-4 rounded-full border-2 border-slate-400 bg-white inline-block"></span>
+              <span class="font-bold text-slate-800">1 mg</span> <span class="text-slate-600 font-medium">(White)</span>
             </div>
-            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-200">
-              <span class="w-3.5 h-3.5 rounded-full bg-orange-400 inline-block shadow-2xs"></span>
-              <span class="font-bold text-slate-800">2 mg</span> <span class="text-slate-500">(Orange)</span>
+            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-300 shadow-2xs">
+              <span class="w-4 h-4 rounded-full bg-orange-500 inline-block"></span>
+              <span class="font-bold text-slate-800">2 mg</span> <span class="text-slate-600 font-medium">(Orange)</span>
             </div>
-            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-200">
-              <span class="w-3.5 h-3.5 rounded-full bg-blue-500 inline-block shadow-2xs"></span>
-              <span class="font-bold text-slate-800">3 mg</span> <span class="text-slate-500">(Blue)</span>
+            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-300 shadow-2xs">
+              <span class="w-4 h-4 rounded-full bg-blue-600 inline-block"></span>
+              <span class="font-bold text-slate-800">3 mg</span> <span class="text-slate-600 font-medium">(Blue)</span>
             </div>
-            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-200">
-              <span class="w-3.5 h-3.5 rounded-full bg-pink-400 inline-block shadow-2xs"></span>
-              <span class="font-bold text-slate-800">5 mg</span> <span class="text-slate-500">(Pink)</span>
+            <div class="flex items-center gap-1.5 bg-white p-1.5 rounded border border-slate-300 shadow-2xs">
+              <span class="w-4 h-4 rounded-full bg-pink-500 inline-block"></span>
+              <span class="font-bold text-slate-800">5 mg</span> <span class="text-slate-600 font-medium">(Pink)</span>
             </div>
           </div>
         </div>
@@ -340,54 +359,54 @@
         <div id="printableSchedule" class="p-4 bg-slate-50 rounded-xl border border-slate-300">
           <div class="flex items-center justify-between mb-2">
             <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
-              <i class="fa-solid fa-calendar-check text-blue-700"></i> Patient Warfarin Intake Schedule (Evening)
+              <i class="fa-solid fa-calendar-check text-blue-700"></i> Ongoing Weekly Maintenance Schedule (Evening)
             </h3>
-            <span class="text-[11px] font-semibold text-slate-500 bg-white px-2 py-0.5 rounded border">Empty Stomach</span>
+            <span class="text-[11px] font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300">Max 0.5–1.0 mg Step Difference</span>
           </div>
           <p class="text-xs text-slate-600 mb-3">
-            Instructions: Take <strong>once daily</strong>, at the <strong>same time every evening</strong>, at least 1 hour before or 2 hours after dinner (on an <strong>empty stomach</strong>). Priority is given to whole tablets to minimize pill-splitting confusion.
+            Instructions: Take <strong>once daily</strong>, at the <strong>same time every evening</strong>, on an <strong>empty stomach</strong> (&ge;1 hour before or 2 hours after dinner). <em>(Note: If instructed to HOLD tonight's dose above, start/resume this weekly schedule from the next evening).</em>
           </p>
 
           <div class="grid grid-cols-7 gap-1 sm:gap-2 text-center my-3">
             <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
               <div class="text-[11px] font-bold text-slate-600">MON</div>
               <div id="schedMon" class="text-base sm:text-lg font-black text-blue-900 my-0.5">-</div>
-              <div id="tabMon" class="text-[10px] text-slate-600 leading-tight">-</div>
+              <div id="tabMon" class="text-[10px] text-slate-700 leading-tight">-</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
               <div class="text-[11px] font-bold text-slate-600">TUE</div>
               <div id="schedTue" class="text-base sm:text-lg font-black text-blue-900 my-0.5">-</div>
-              <div id="tabTue" class="text-[10px] text-slate-600 leading-tight">-</div>
+              <div id="tabTue" class="text-[10px] text-slate-700 leading-tight">-</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
               <div class="text-[11px] font-bold text-slate-600">WED</div>
               <div id="schedWed" class="text-base sm:text-lg font-black text-blue-900 my-0.5">-</div>
-              <div id="tabWed" class="text-[10px] text-slate-600 leading-tight">-</div>
+              <div id="tabWed" class="text-[10px] text-slate-700 leading-tight">-</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
               <div class="text-[11px] font-bold text-slate-600">THU</div>
               <div id="schedThu" class="text-base sm:text-lg font-black text-blue-900 my-0.5">-</div>
-              <div id="tabThu" class="text-[10px] text-slate-600 leading-tight">-</div>
+              <div id="tabThu" class="text-[10px] text-slate-700 leading-tight">-</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
               <div class="text-[11px] font-bold text-slate-600">FRI</div>
               <div id="schedFri" class="text-base sm:text-lg font-black text-blue-900 my-0.5">-</div>
-              <div id="tabFri" class="text-[10px] text-slate-600 leading-tight">-</div>
+              <div id="tabFri" class="text-[10px] text-slate-700 leading-tight">-</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
               <div class="text-[11px] font-bold text-slate-600">SAT</div>
               <div id="schedSat" class="text-base sm:text-lg font-black text-blue-900 my-0.5">-</div>
-              <div id="tabSat" class="text-[10px] text-slate-600 leading-tight">-</div>
+              <div id="tabSat" class="text-[10px] text-slate-700 leading-tight">-</div>
             </div>
             <div class="bg-white p-2 rounded-lg border border-slate-200 shadow-2xs">
               <div class="text-[11px] font-bold text-slate-600">SUN</div>
               <div id="schedSun" class="text-base sm:text-lg font-black text-blue-900 my-0.5">-</div>
-              <div id="tabSun" class="text-[10px] text-slate-600 leading-tight">-</div>
+              <div id="tabSun" class="text-[10px] text-slate-700 leading-tight">-</div>
             </div>
           </div>
 
           <div class="text-[11px] text-slate-500 pt-2 border-t border-slate-200 flex flex-wrap justify-between items-center gap-1">
-            <span>Maforan formulation matching: Prioritize minimal tablet counts (discuss dispensing policy with pharmacy).</span>
+            <span>Brand: Maforan (1mg White, 2mg Orange, 3mg Blue, 5mg Pink). Verify home blister packs ("Brown Bag Check").</span>
             <span class="font-semibold text-slate-700">Never double dose if a dose is missed.</span>
           </div>
         </div>
@@ -406,7 +425,7 @@
 
     <!-- Appendix / Guideline Attribution Footer -->
     <footer class="text-center text-xs text-slate-500 space-y-1 pt-4 border-t border-slate-200">
-      <p class="font-semibold text-slate-600">Warfarin-EZ Decision Support System | Version 2.2 (Updated: November 2026)</p>
+      <p class="font-semibold text-slate-600">Warfarin-EZ Decision Support System | Version 2.5 (Updated: November 2026)</p>
       <p>Reference: <em>Anticoagulation MTAC (AC-MTAC) Protocol 2nd Edition (2020), Pharmaceutical Services Programme, Ministry of Health Malaysia (MOH)</em>.</p>
       <p class="text-[11px] text-slate-400">This tool is designed for clinical decision support only and is not a substitute for clinical judgment.</p>
     </footer>
@@ -495,7 +514,7 @@
             <tr>
               <td class="border p-2 font-bold text-slate-800">&lt; 5.0</td>
               <td class="border p-2">No bleeding</td>
-              <td class="border p-2">Lower weekly dose by 10%–15% or omit 1 dose. TCA in 7–14 days. Routine Vitamin K is NOT required.</td>
+              <td class="border p-2">Omit 1 dose tonight and lower weekly dose by 10%–15% (or resume prior dose if spike was due to a single accidental double dose). TCA in 7 days. Routine Vitamin K is NOT required.</td>
             </tr>
             <tr class="bg-amber-50">
               <td class="border p-2 font-bold text-amber-900">5.0 – 8.9</td>
@@ -528,7 +547,7 @@
     </div>
   </div>
 
-  <!-- Modal 3: Structured Causes of Increased vs Reduced INR (MOH Appendix 13 & Clinical Assessment) -->
+  <!-- Modal 3: Structured Causes of Increased vs Reduced INR -->
   <div id="inrCausesModal" class="hidden fixed inset-0 bg-slate-900/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-3xl rounded-2xl shadow-xl max-h-[90vh] flex flex-col overflow-hidden">
       <div class="bg-indigo-900 text-white px-5 py-3.5 flex items-center justify-between">
@@ -686,12 +705,13 @@
       }
 
       const chkMissed = document.getElementById('chkMissed').checked;
+      const chkDouble = document.getElementById('chkDoubleDose').checked;
       const chkInteractions = document.getElementById('chkInteractions').checked;
       const chkLifestyle = document.getElementById('chkLifestyle').checked;
       const chkIllness = document.getElementById('chkIllness').checked;
       const rootCauseNotice = document.getElementById('rootCauseNotice');
 
-      if (chkMissed || chkInteractions || chkLifestyle || chkIllness) {
+      if (chkMissed || chkDouble || chkInteractions || chkLifestyle || chkIllness) {
         rootCauseNotice.classList.remove('hidden');
       } else {
         rootCauseNotice.classList.add('hidden');
@@ -709,10 +729,13 @@
 
       const chkBleedMajor = document.getElementById('chkBleedMajor').checked;
       const chkPregnancy = document.getElementById('chkPregnancy').checked;
-      const hasRootCauses = document.getElementById('chkMissed').checked || 
-                            document.getElementById('chkInteractions').checked || 
-                            document.getElementById('chkLifestyle').checked || 
-                            document.getElementById('chkIllness').checked;
+      const chkMissed = document.getElementById('chkMissed').checked;
+      const chkDouble = document.getElementById('chkDoubleDose').checked;
+      const chkInteractions = document.getElementById('chkInteractions').checked;
+      const chkLifestyle = document.getElementById('chkLifestyle').checked;
+      const chkIllness = document.getElementById('chkIllness').checked;
+
+      const hasOtherTriggers = chkInteractions || chkLifestyle || chkIllness;
 
       if (isNaN(inr) || inr <= 0) {
         alert('Please enter a valid INR reading.');
@@ -733,30 +756,63 @@
       resultsSection.classList.remove('hidden');
 
       const badge = document.getElementById('badgeStatus');
+      const discordanceBox = document.getElementById('discordanceAlertBox');
       const alertBox = document.getElementById('alertBox');
+      const holdBanner = document.getElementById('immediateHoldBanner');
+      const holdText = document.getElementById('immediateHoldText');
       const resOld = document.getElementById('resOldTotal');
       const resNew = document.getElementById('resNewTotal');
       const resInterval = document.getElementById('resInterval');
 
       resOld.innerText = currentTotal.toFixed(1) + ' mg';
 
+      // Reset banners
+      discordanceBox.classList.add('hidden');
+      holdBanner.classList.add('hidden');
+
       let percentChange = 0;
-      let holdDays = 0;
       let intervalText = '';
       let statusClass = '';
       let statusText = '';
       let adviceHtml = '';
       let overrideDose = null;
 
+      // CLINICAL DISCORDANCE DETECTOR (Medical Error Prevention Guardrail)
+      // Case A: INR is HIGH (> targetMax) AND "Missed Dose Only" is checked without Double Dose
+      if (inr > targetMax && chkMissed && !chkDouble) {
+        discordanceBox.classList.remove('hidden');
+        discordanceBox.innerHTML = `
+          <div class="font-bold text-red-800 text-sm mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> CLINICAL DISCORDANCE ALERT: High INR (${inr.toFixed(2)}) vs. Missed Pill!
+          </div>
+          <p class="mb-1.5"><strong>Why this is discordant:</strong> Missing a warfarin dose <em>lowers</em> the INR; it cannot explain an elevated INR of ${inr.toFixed(2)}.</p>
+          <ul class="list-disc pl-4 space-y-0.5 text-xs">
+            <li><strong>Check for Accidental Double Dose:</strong> Ask the patient directly if they took 2 doses the following day to "make up" for the missed pill, or mixed up tablet colors at home.</li>
+            <li><strong>Rule Out Lab Error / Hidden Triggers:</strong> Verify recent antibiotics (Bactrim, metronidazole, cipro, fluconazole), NSAIDs, acute febrile/diarrheal illness, or repeat INR same-day/next-day if completely unexplained.</li>
+          </ul>
+        `;
+      }
+      // Case B: INR is LOW (< targetMin) AND "Accidental Double Dose" is checked
+      else if (inr < targetMin && chkDouble && !chkMissed) {
+        discordanceBox.classList.remove('hidden');
+        discordanceBox.innerHTML = `
+          <div class="font-bold text-red-800 text-sm mb-1 flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation"></i> CLINICAL DISCORDANCE ALERT: Low INR (${inr.toFixed(2)}) vs. Extra/Double Dose!
+          </div>
+          <p>Taking extra warfarin raises the INR. Verify exact tablet strengths taken at home ("Brown Bag Check") and rule out enzyme inducers (rifampicin, carbamazepine, phenytoin) or lab sampling error.</p>
+        `;
+      }
+
       // Priority 1: Bleeding Emergency
       if (chkBleedMajor) {
         statusText = 'EMERGENCY: Major Active Bleeding';
         statusClass = 'bg-red-800 text-white';
-        holdDays = 7;
         overrideDose = 0;
         intervalText = 'IMMEDIATE (Hospital ED)';
+        holdBanner.classList.remove('hidden');
+        holdText.innerHTML = `<strong>STOP WARFARIN IMMEDIATELY.</strong> Transfer to Hospital Emergency Department for urgent reversal (IV Vitamin K + PCC/FFP).`;
         adviceHtml = `<strong class="text-red-700 text-sm block mb-1"><i class="fa-solid fa-triangle-exclamation"></i> EMERGENCY ACTION REQUIRED:</strong>
-          Patient exhibits critical bleeding red flags. <strong>HOLD warfarin immediately</strong>. Resuscitate, assess hemodynamic stability, and refer immediately to the Hospital Emergency Department for reversal and specialist management.`;
+          Patient exhibits critical bleeding red flags. <strong>HOLD warfarin immediately</strong>. Resuscitate, assess hemodynamic stability, and refer immediately to the Hospital Emergency Department.`;
       }
       // Priority 2: Pregnancy
       else if (chkPregnancy) {
@@ -772,70 +828,95 @@
         if (inr >= 9.0) {
           statusText = 'CRITICAL ALERT: INR &ge; 9.0 (Extremely High Bleeding Risk)';
           statusClass = 'bg-red-700 text-white';
-          holdDays = 2;
           percentChange = -20;
           intervalText = '24 to 48 Hours';
+          holdBanner.classList.remove('hidden');
+          holdText.innerHTML = `<strong>HOLD WARFARIN NOW</strong> until INR returns to therapeutic range. Administer <strong>oral Vitamin K 2.5 mg – 5 mg</strong>. Repeat INR in 24–48 hours.`;
           adviceHtml = `<strong class="text-red-700 block mb-1">URGENT MANAGEMENT (INR &ge; 9.0):</strong>
-            Hold warfarin. Administer <strong>oral Vitamin K 2.5 mg – 5 mg</strong>. Assess bleeding risk, notify the Family Medicine Specialist (FMS), or refer to hospital if patient is unstable. Repeat INR in 24–48 hours.`;
+            Hold warfarin. Administer <strong>oral Vitamin K 2.5 mg – 5 mg</strong>. Notify the Family Medicine Specialist (FMS) or refer to hospital if patient is unstable. Repeat INR in 24–48 hours, then resume at 15%–20% lower weekly maintenance dose.`;
         } else {
           statusText = `Marked Supra-Therapeutic (INR ${inr.toFixed(2)})`;
           statusClass = 'bg-red-100 text-red-900 border border-red-300';
-          holdDays = 1;
           percentChange = -15;
           intervalText = '3 to 5 Days';
+          holdBanner.classList.remove('hidden');
+          holdText.innerHTML = `<strong>OMIT / HOLD 1 TO 2 DOSES</strong> of warfarin first, then resume the reduced weekly maintenance schedule below.`;
           adviceHtml = `<strong class="text-red-800 block mb-1">INR &gt; 5.0 Without Active Bleeding:</strong>
             Hold 1 to 2 doses of warfarin. Reduce weekly dose by <strong>10% – 15%</strong>. Routine oral Vitamin K is NOT required unless high bleeding risk is present. Repeat INR in 3–5 days. Discuss with FMS / MO on duty.`;
         }
-      } 
-      // Priority 4: Reversible Root Cause Present & Single Isolated Out-of-Range Reading
-      else if (hasRootCauses && !isConsecutiveOut && (inr < targetMin || inr > targetMax)) {
-        statusText = `Out of Range (Reversible Cause Identified)`;
-        statusClass = 'bg-amber-100 text-amber-900 border border-amber-300';
-        percentChange = 0; // Maintain dose
-        intervalText = '1 to 2 Weeks (or 3 Days if ABx)';
-        adviceHtml = `<strong class="text-amber-800 block mb-1">MAINTAIN CURRENT DOSE (Single Out-of-Range INR):</strong>
-          A reversible trigger (missed dose / interacting medication / diet or exercise change / acute illness) was identified. In accordance with MOH AC-MTAC guidelines, <strong>do not make immediate permanent dose adjustments</strong> for an isolated reading. Reinforce adherence or resolve the trigger, maintain the current dose, and recheck INR in 1–2 weeks (or 3 days if started on interacting antibiotics/amiodarone). If the INR remains out of range on the subsequent visit, then adjust weekly dose.`;
-      } 
-      // Priority 5: Isolated Mild Drift (+/- 0.2) in Stable Patient
-      else if (!isConsecutiveOut && ((inr >= targetMin - 0.2 && inr < targetMin) || (inr > targetMax && inr <= targetMax + 0.2))) {
-        statusText = `Minor INR Drift (${inr.toFixed(2)})`;
-        statusClass = 'bg-blue-100 text-blue-900 border border-blue-200';
-        percentChange = 0;
-        intervalText = '1 to 2 Weeks';
-        adviceHtml = `<strong>ISOLATED READING WITHIN &plusmn;0.2 OF TARGET:</strong>
-          In a patient who is generally stable, minor deviations of &plusmn;0.2 from the target range (${targetMin} - ${targetMax}) without bleeding do not warrant an immediate dose change. Maintain current dose and recheck in 1–2 weeks; if the deviation persists, adjust the weekly dose.`;
       }
-      // Priority 6: Consecutive Out-of-Range or Significant Deviation -> Adjust per AC-MTAC Engine
+      // Priority 4: Supra-therapeutic > Target Max (e.g., INR 3.3 - 4.9) -> MUST ALWAYS OMIT 1 DOSE TONIGHT FIRST!
+      else if (inr > targetMax && inr < 5.0) {
+        // Check if within +0.2 drift in a stable patient without consecutive readings
+        if (!isConsecutiveOut && inr <= targetMax + 0.2 && !chkDouble && !hasOtherTriggers) {
+          statusText = `Minor INR Drift (${inr.toFixed(2)})`;
+          statusClass = 'bg-blue-100 text-blue-900 border border-blue-200';
+          percentChange = 0;
+          intervalText = '1 to 2 Weeks';
+          adviceHtml = `<strong>ISOLATED READING WITHIN &plusmn;0.2 OF TARGET:</strong>
+            In a patient who is generally stable, minor elevation &le;0.2 above target (${targetMax}) without bleeding does not require a permanent dose reduction. Maintain current dose and recheck INR in 1–2 weeks.`;
+        } else {
+          // True supra-therapeutic < 5.0 (e.g. INR 4.5)
+          statusText = `Supra-Therapeutic (INR ${inr.toFixed(2)} < 5.0)`;
+          statusClass = 'bg-amber-100 text-amber-950 border border-amber-400';
+          intervalText = '1 Week (7 Days)';
+
+          // Always show Immediate Hold Banner for INR > targetMax + 0.2
+          holdBanner.classList.remove('hidden');
+          holdText.innerHTML = `<strong>OMIT / HOLD 1 DOSE TONIGHT</strong> (do not take warfarin tonight). Routine Vitamin K is <strong>NOT indicated</strong> for asymptomatic INR &lt; 5.0.`;
+
+          // Decide whether to resume old dose (if transient double dose / acute trigger) or reduce 10-15%
+          if ((chkDouble || hasOtherTriggers) && !isConsecutiveOut) {
+            percentChange = 0; // Resume prior weekly maintenance dose after holding tonight!
+            adviceHtml = `<strong class="text-amber-900 block mb-1">STEP 2 ONGOING MAINTENANCE (Transient Trigger / Double Dose):</strong>
+              After <strong>holding 1 dose tonight</strong>, <strong>resume the previous weekly maintenance dose (${currentTotal.toFixed(1)} mg/week)</strong> starting tomorrow evening once the transient trigger/double dose is resolved. Repeat INR in <strong>7 days</strong>. (Note: Notify MO per AC-MTAC SOP for INR &gt; 4.0).`;
+          } else {
+            percentChange = -10; // Reduce 10-15%
+            adviceHtml = `<strong class="text-amber-900 block mb-1">STEP 2 ONGOING MAINTENANCE (No Transient Trigger / Persistent Elevation):</strong>
+              After <strong>holding 1 dose tonight</strong>, reduce the ongoing weekly maintenance dose by <strong>10% – 15%</strong> starting tomorrow evening. Repeat INR in <strong>7 days</strong>. (Note: Notify MO per AC-MTAC SOP for INR &gt; 4.0).`;
+          }
+        }
+      }
+      // Priority 5: Sub-therapeutic (< Target Min)
       else if (inr < targetMin) {
-        statusText = `Sub-Therapeutic (INR ${inr.toFixed(2)})`;
-        statusClass = 'bg-amber-100 text-amber-900 border border-amber-300';
-        percentChange = (inr < 1.5) ? 15 : 10;
-        intervalText = '1 to 2 Weeks';
-        adviceHtml = `<strong>INR BELOW TARGET:</strong>
-          Increase total weekly dose by <strong>${percentChange}%</strong> (based on the rule: ~1% dose change produces ~0.1 INR change). Verify compliance (evening intake, empty stomach) and screen for increased exercise or dietary Vitamin K. Repeat INR in 1–2 weeks.`;
-      } 
-      else if (inr >= targetMin && inr <= targetMax) {
+        if ((chkMissed || hasOtherTriggers) && !isConsecutiveOut) {
+          statusText = `Sub-Therapeutic (Reversible Trigger Identified)`;
+          statusClass = 'bg-amber-100 text-amber-900 border border-amber-300';
+          percentChange = 0;
+          intervalText = '1 to 2 Weeks';
+          adviceHtml = `<strong class="text-amber-800 block mb-1">MAINTAIN CURRENT DOSE (Single Out-of-Range INR with Reversible Trigger):</strong>
+            Because a missed dose or transient trigger explains the low INR (${inr.toFixed(2)}), <strong>do not make an immediate permanent dose increase</strong>. Reinforce adherence (evening intake, empty stomach, never double dose), maintain current weekly dose, and recheck INR in 1–2 weeks.`;
+        } else if (!isConsecutiveOut && inr >= targetMin - 0.2) {
+          statusText = `Minor INR Drift (${inr.toFixed(2)})`;
+          statusClass = 'bg-blue-100 text-blue-900 border border-blue-200';
+          percentChange = 0;
+          intervalText = '1 to 2 Weeks';
+          adviceHtml = `<strong>ISOLATED READING WITHIN &plusmn;0.2 OF TARGET:</strong>
+            In a stable patient, an isolated reading within 0.2 below target (${targetMin}) does not warrant an immediate dose increase. Maintain current dose and recheck in 1–2 weeks; if sub-therapeutic on repeat, increase weekly dose by 10%.`;
+        } else {
+          statusText = `Sub-Therapeutic (INR ${inr.toFixed(2)})`;
+          statusClass = 'bg-amber-100 text-amber-900 border border-amber-300';
+          percentChange = (inr < 1.5) ? 15 : 10;
+          intervalText = '1 to 2 Weeks';
+          adviceHtml = `<strong>INR BELOW TARGET:</strong>
+            Increase total weekly dose by <strong>${percentChange}%</strong> (~1% weekly dose change &approx; 0.1 INR shift). Verify compliance and check for increased exercise or dietary Vitamin K. Repeat INR in 1–2 weeks.`;
+        }
+      }
+      // Priority 6: In Therapeutic Range
+      else {
         statusText = `Therapeutic Target Achieved (INR ${inr.toFixed(2)})`;
         statusClass = 'bg-emerald-100 text-emerald-900 border border-emerald-300';
         percentChange = 0;
         intervalText = '4 to 8 Weeks';
         adviceHtml = `<strong>THERAPEUTIC RANGE ACHIEVED:</strong>
-          Maintain current weekly dose. If INR has been consistently stable for 8–10 consecutive weeks with high compliance, monitoring interval may be extended up to 6–12 weeks.`;
-      } 
-      else if (inr > targetMax && inr < 5.0) {
-        statusText = `Mild Supra-Therapeutic (INR ${inr.toFixed(2)})`;
-        statusClass = 'bg-amber-100 text-amber-900 border border-amber-300';
-        percentChange = -10;
-        intervalText = '1 Week';
-        adviceHtml = `<strong>INR ABOVE TARGET (&lt; 5.0):</strong>
-          Reduce total weekly dose by <strong>10%</strong>. Consider omitting 1 dose if at high bleeding risk. Routine Vitamin K is not indicated if no active bleeding. Repeat INR in 1 week.`;
+          Maintain current weekly dose (optimized below with smooth 0.5–1.0 mg day-to-day steps). If INR has been consistently stable for 8–10 consecutive weeks with high compliance, monitoring interval may be extended up to 6–12 weeks.`;
       }
 
       badge.className = 'px-3 py-1 rounded-full text-xs font-bold ' + statusClass;
       badge.innerText = statusText;
 
       alertBox.className = 'p-3.5 rounded-xl text-xs sm:text-sm mb-4 leading-relaxed ' + 
-        (inr >= 5.0 || chkBleedMajor ? 'bg-red-50 text-red-900 border-red-200' : (chkPregnancy ? 'bg-purple-50 text-purple-950 border-purple-200' : (percentChange !== 0 ? 'bg-amber-50 text-amber-900 border-amber-200' : 'bg-emerald-50 text-emerald-900 border-emerald-200')));
+        (inr >= 5.0 || chkBleedMajor ? 'bg-red-50 text-red-900 border-red-200' : (chkPregnancy ? 'bg-purple-50 text-purple-950 border-purple-200' : (inr > targetMax || inr < targetMin ? 'bg-amber-50 text-amber-950 border-amber-200' : 'bg-emerald-50 text-emerald-900 border-emerald-200')));
       alertBox.innerHTML = adviceHtml;
 
       let newTotal = currentTotal;
@@ -845,83 +926,76 @@
         newTotal = Math.round((currentTotal * (1 + percentChange / 100)) * 2) / 2;
       }
 
-      resNew.innerHTML = `${newTotal.toFixed(1)} mg <span class="text-xs font-normal text-blue-700">(${percentChange >= 0 ? '+' : ''}${percentChange}%)</span>`;
+      let actualPct = currentTotal > 0 ? Math.round(((newTotal - currentTotal) / currentTotal) * 100) : 0;
+      resNew.innerHTML = `${newTotal.toFixed(1)} mg <span class="text-xs font-normal text-blue-700">(${actualPct >= 0 ? '+' : ''}${actualPct}%)</span>`;
       resInterval.innerText = intervalText;
 
-      // Build simplified schedule prioritizing whole tablets
-      buildSimplifiedSchedule(newTotal, holdDays);
+      // Build smooth 0.5-1.0 mg step ongoing weekly maintenance schedule
+      buildSmoothStepSchedule(newTotal);
     }
 
-    // Prioritize whole tablets with minimal tablet variations
-    function buildSimplifiedSchedule(targetWeeklyMg, holdDays) {
+    function buildSmoothStepSchedule(targetWeeklyMg) {
       const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       let schedule = [0, 0, 0, 0, 0, 0, 0];
 
       if (targetWeeklyMg <= 0) {
         days.forEach(d => {
-          document.getElementById('sched' + d).innerText = '0.0 mg';
-          document.getElementById('tab' + d).innerText = 'HOLD / Omit';
+          document.getElementById('sched' + d).innerText = '0 mg';
+          document.getElementById('tab' + d).innerHTML = '<span class="text-red-600 font-bold">STOP / HOLD</span>';
         });
         return;
       }
 
-      let activeDays = 7 - holdDays;
-      let baseDose = Math.floor(targetWeeklyMg / activeDays);
-      let remainder = Math.round((targetWeeklyMg - (baseDose * activeDays)) * 2) / 2;
+      let totalHalfUnits = Math.round(targetWeeklyMg * 2);
+      let baseHalfUnits = Math.floor(totalHalfUnits / 7);
+      let extraHalfUnits = totalHalfUnits % 7;
+
+      let baseDose = baseHalfUnits / 2;
 
       for (let i = 0; i < 7; i++) {
-        if (i < holdDays) {
-          schedule[i] = 0;
-        } else {
-          schedule[i] = baseDose;
-        }
+        schedule[i] = baseDose;
       }
 
-      const distOrder = [0, 2, 4, 6, 1, 3, 5];
+      // Group +0.5 mg days cleanly at end of week (Sun, Sat, Fri...) per MOH Appendix 12
+      const weekendFirstOrder = [6, 5, 4, 3, 2, 1, 0];
       let p = 0;
-      while (remainder > 0 && p < distOrder.length) {
-        let dayIdx = distOrder[p];
-        if (dayIdx >= holdDays) {
-          if (remainder >= 1.0) {
-            schedule[dayIdx] += 1.0;
-            remainder -= 1.0;
-          } else if (remainder === 0.5) {
-            schedule[dayIdx] += 0.5;
-            remainder -= 0.5;
-          }
-        }
+      while (extraHalfUnits > 0 && p < weekendFirstOrder.length) {
+        let dayIdx = weekendFirstOrder[p];
+        schedule[dayIdx] += 0.5;
+        extraHalfUnits -= 1;
         p++;
       }
 
-      // Display in table
       days.forEach((d, idx) => {
         const val = schedule[idx];
-        document.getElementById('sched' + d).innerText = val.toFixed(1) + ' mg';
-        document.getElementById('tab' + d).innerHTML = getMaforanTabletCombos(val);
+        document.getElementById('sched' + d).innerText = (val % 1 === 0 ? val.toFixed(0) : val.toFixed(1)) + ' mg';
+        document.getElementById('tab' + d).innerHTML = getMaforanSafeCombo(val);
       });
     }
 
-    // Formulation: Maforan round tablets
-    function getMaforanTabletCombos(mg) {
+    // Maforan Round Tablets: 1mg (White), 2mg (Orange), 3mg (Blue), 5mg (Pink)
+    function getMaforanSafeCombo(mg) {
       if (mg === 0) return '<span class="text-red-600 font-bold">HOLD (Omit)</span>';
-      
-      // Preferred combinations with FEWEST tablet types and whole pills:
+      if (mg === 0.5) return '<span class="font-bold">&frac12; x 1mg</span> (White)';
       if (mg === 1) return '<span class="font-bold">1 x 1mg</span> (White)';
+      if (mg === 1.5) return '<span class="font-bold">1&frac12; x 1mg</span> (White)';
       if (mg === 2) return '<span class="font-bold">1 x 2mg</span> (Orange)';
+      if (mg === 2.5) return '<span class="font-bold">1 x 2mg</span> (Orange) + <span class="font-bold">&frac12; x 1mg</span> (White)';
       if (mg === 3) return '<span class="font-bold">1 x 3mg</span> (Blue)';
+      if (mg === 3.5) return '<span class="font-bold">1 x 3mg</span> (Blue) + <span class="font-bold">&frac12; x 1mg</span> (White)';
       if (mg === 4) return '<span class="font-bold">2 x 2mg</span> (Orange)';
+      if (mg === 4.5) return '<span class="font-bold">2 x 2mg</span> (Orange) + <span class="font-bold">&frac12; x 1mg</span> (White)';
       if (mg === 5) return '<span class="font-bold">1 x 5mg</span> (Pink)';
+      if (mg === 5.5) return '<span class="font-bold">1 x 5mg</span> (Pink) + <span class="font-bold">&frac12; x 1mg</span> (White)';
       if (mg === 6) return '<span class="font-bold">2 x 3mg</span> (Blue)';
+      if (mg === 6.5) return '<span class="font-bold">2 x 3mg</span> (Blue) + <span class="font-bold">&frac12; x 1mg</span> (White)';
       if (mg === 7) return '<span class="font-bold">1 x 5mg</span> (Pink) + <span class="font-bold">1 x 2mg</span> (Orange)';
+      if (mg === 7.5) return '<span class="font-bold">1 x 5mg</span> (Pink) + <span class="font-bold">1 x 2mg</span> (Orange) + <span class="font-bold">&frac12; x 1mg</span>';
       if (mg === 8) return '<span class="font-bold">1 x 5mg</span> (Pink) + <span class="font-bold">1 x 3mg</span> (Blue)';
+      if (mg === 8.5) return '<span class="font-bold">1 x 5mg</span> (Pink) + <span class="font-bold">1 x 3mg</span> (Blue) + <span class="font-bold">&frac12; x 1mg</span>';
       if (mg === 9) return '<span class="font-bold">3 x 3mg</span> (Blue)';
+      if (mg === 9.5) return '<span class="font-bold">3 x 3mg</span> (Blue) + <span class="font-bold">&frac12; x 1mg</span> (White)';
       if (mg === 10) return '<span class="font-bold">2 x 5mg</span> (Pink)';
-
-      // Half tablet combinations if necessary
-      if (mg === 1.5) return '1 &frac12; x 1mg (White)';
-      if (mg === 2.5) return '&frac12; x 5mg (Pink)';
-      if (mg === 3.5) return '1 x 3mg (Blue) + &frac12; x 1mg (White)';
-      if (mg === 4.5) return '1 x 3mg (Blue) + 1 &frac12; x 1mg (White)';
 
       return mg + ' mg (Maforan)';
     }
@@ -934,18 +1008,22 @@
       const oldTot = document.getElementById('resOldTotal').innerText;
       const newTot = document.getElementById('resNewTotal').innerText;
       const interval = document.getElementById('resInterval').innerText;
+      const holdHidden = document.getElementById('immediateHoldBanner').classList.contains('hidden');
 
       const sched = `Mon: ${document.getElementById('schedMon').innerText} | Tue: ${document.getElementById('schedTue').innerText} | Wed: ${document.getElementById('schedWed').innerText} | Thu: ${document.getElementById('schedThu').innerText} | Fri: ${document.getElementById('schedFri').innerText} | Sat: ${document.getElementById('schedSat').innerText} | Sun: ${document.getElementById('schedSun').innerText}`;
 
-      const text = `[WARFARIN CLINICAL REVIEW - KLINIK KESIHATAN]\n` +
+      const holdNote = holdHidden ? '' : `- Immediate Action: Omit/Hold dose tonight as instructed before resuming schedule\n`;
+
+      const text = `[WARFARIN CLINICAL REVIEW - KLINIK KESIHATAN PONTIAN]\n` +
         `- Therapy Phase: Maintenance\n` +
         `- Today INR: ${inr} (Target Range: ${targetMin} - ${targetMax})\n` +
         `- Bleeding & Pregnancy Screen: Nil active bleeding / not pregnant\n` +
-        `- Weekly Dose: ${oldTot} -> ${newTot}\n` +
-        `- Updated Regimen (Evening, Empty Stomach): ${sched}\n` +
-        `- Counseling: Brand Maforan, adherence reinforced, consistent dietary Vit K & physical activity\n` +
+        holdNote +
+        `- Weekly Maintenance Dose: ${oldTot} -> ${newTot}\n` +
+        `- Ongoing Regimen (Evening, Empty Stomach, Smooth <=0.5-1mg Step): ${sched}\n` +
+        `- Counseling: Brand Maforan (1mg White, 2mg Orange, 3mg Blue, 5mg Pink), never double dose if missed, consistent dietary Vit K & physical activity\n` +
         `- Plan: TCA for repeat INR in ${interval}\n` +
-        `[Warfarin-EZ v2.2 Decision Support Tool - MOH AC-MTAC Protocol 2nd Ed]`;
+        `[Warfarin-EZ v2.5 Decision Support Tool - MOH AC-MTAC Protocol 2nd Ed]`;
 
       navigator.clipboard.writeText(text).then(() => {
         alert('Clinical note copied to clipboard! Ready to paste into CCMS / e-Klinik / TPC-OHCIS.');
